@@ -1,5 +1,5 @@
-FROM jobiols/odoo-jeo:13.0
-LABEL maintainer="Jorge Obiols <jorge.obiols@gmail.com>"
+FROM regaby/odoo:13.0
+LABEL maintainer="Gabriela Rivero <regaby@gmail.com>"
 
 USER root
 

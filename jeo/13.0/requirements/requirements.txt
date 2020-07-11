@@ -15,3 +15,7 @@ docker==4.2.0
 # dependencia para meli
 
 pdf2image
+
+# dependencias para mercado pago
+
+mercadopago
