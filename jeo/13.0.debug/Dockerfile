@@ -1,4 +1,4 @@
-FROM regaby/odoo:13.0
+FROM regaby/odoo-ce:13.0
 LABEL maintainer="Gabriela Rivero <regaby@gmail.com>"
 
 USER root
