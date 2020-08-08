@@ -135,6 +135,7 @@ RUN rm -r /req
 # RUN mkdir /usr/local/lib/python3.5/dist-packages/pyafipws/cache
 # RUN chmod o+rw /usr/local/lib/python3.5/dist-packages/pyafipws/cache
 
+COPY ./fix_handshake.sh /
 ENTRYPOINT ["/fix_handshake.sh"]
 
 USER odoo
