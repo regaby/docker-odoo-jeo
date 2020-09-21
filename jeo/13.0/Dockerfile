@@ -132,10 +132,14 @@ RUN pip3 install -r /req/adhoc-odoo-argentina.txt
 RUN rm -r /req
 
 # crear cache para pyafipws
-# RUN mkdir /usr/local/lib/python3.5/dist-packages/pyafipws/cache
-# RUN chmod o+rw /usr/local/lib/python3.5/dist-packages/pyafipws/cache
+USER root
+RUN mkdir /usr/local/lib/python3.7/dist-packages/pyafipws/cache
+USER root
+RUN chmod o+rw /usr/local/lib/python3.7/dist-packages/pyafipws/cache
 
-COPY ./fix_handshake.sh /
+# COPY ./fix_handshake.sh /
+# USER root
 # ENTRYPOINT ["/fix_handshake.sh"]
+RUN sed -i 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
 
 USER odoo
