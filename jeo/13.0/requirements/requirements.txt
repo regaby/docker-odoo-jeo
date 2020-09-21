@@ -19,3 +19,7 @@ pdf2image
 # dependencias para mercado pago
 
 mercadopago
+
+# dependencia social_push_notifications
+
+firebase-admin
