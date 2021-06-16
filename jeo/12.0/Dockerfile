@@ -104,7 +104,7 @@ CMD ["odoo"]
 ###############################################################################
 
 FROM base-image
-LABEL maintainer="Jorge Obiols <jorge.obiols@gmail.com>"
+LABEL maintainer="Gabriela Rivero <regaby@gmail.com>"
 ENV Release 2020-07-09
 
 USER root
@@ -242,5 +242,75 @@ ENV \
     AFIP_PROD_CERT_FILE=/opt/odoo/backups/prod.cert
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+USER odoo
+
+
+USER root
+
+## Oracle Cliente
+## https://stackoverflow.com/questions/55852183/error-using-oracle-instant-client-docker-image
+# 1. Install dependencies
+FROM node:8.15 as cache-package
+
+# COPY package.json /srv/src/package.json
+# WORKDIR /srv/src
+
+RUN yarn install
+
+# 2.
+FROM node:8.15 as builder
+
+# 1. Update everything on the box
+RUN apt-get update && \
+      apt-get install sudo
+#RUN apk --update add libaio bc net-tools
+RUN sudo apt-get install unzip
+RUN sudo apt-get install wget
+RUN sudo apt-get install git
+
+# 3. Install oracle client
+RUN mkdir -p /opt/oracle
+# 3.1 Get oracle client
+WORKDIR /opt/oracle
+
+RUN wget -O /opt/oracle/instantclient_19_6_linux.zip https://download.oracle.com/otn_software/linux/instantclient/19600/instantclient-basic-linux.x64-19.6.0.0.0dbru.zip
+RUN sudo unzip /opt/oracle/instantclient_19_6_linux.zip
+
+# 3.2 Configure oracle client to work with node
+RUN sudo sh -c "echo /opt/oracle/instantclient_19_6_linux > /etc/ld.so.conf.d/oracle-instantclient.conf"
+RUN sudo cat /etc/ld.so.conf.d/oracle-instantclient.conf
+
+
+
+FROM node:8.15
+
+RUN apt-get update && \
+      apt-get install sudo
+RUN sudo apt-get install libaio1
+
+# RUN mkdir -p /srv/src/logs
+# RUN mkdir -p /srv/logs
+RUN mkdir -p /opt/oracle
+
+# 4. Set the working directory
+
+# 5. Copy our project & install our dependencies
+# COPY --from=cache-package /srv/src /srv/src
+
+# COPY --from=builder /opt/oracle/instantclient_19_6_linux /opt/oracle/instantclient_19_6_linux
+COPY --from=builder /etc/ld.so.conf.d/oracle-instantclient.conf /etc/ld.so.conf.d/oracle-instantclient.conf
+
+RUN sudo ldconfig
+
+RUN ln -sf /usr/share/zoneinfo/WET /etc/localtime
+
+# COPY . /srv/src
+
+# WORKDIR /srv/src
+
+# 6. Start the app
+CMD yarn start
+
 
 USER odoo

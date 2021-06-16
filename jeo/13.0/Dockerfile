@@ -128,6 +128,10 @@ RUN apt-get install build-essential python3-dev python-dev libssl-dev swig -y -q
 COPY ./requirements /req
 RUN pip3 install -r /req/requirements.txt
 RUN pip3 install -r /req/adhoc-odoo-argentina.txt
+RUN pip3 install -r /req/adhoc-aeroo_reports.txt
+RUN pip3 install -r /req/oca-geospatial.txt
+RUN pip3 install -r /req/oca-rest-framework.txt
+RUN pip3 install -r /req/oca-server-tools.txt
 
 RUN rm -r /req
 

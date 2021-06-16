@@ -23,3 +23,12 @@ mercadopago
 # dependencia social_push_notifications
 
 firebase-admin
+
+# dependencia geospatial
+
+simplejson
+pyproj
+
+openpyxl
+netifaces
+pycurl

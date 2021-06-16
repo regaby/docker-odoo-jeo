@@ -1,3 +1,4 @@
 pysftp
 erppeek
 markdown
+cx_Oracle==7.3

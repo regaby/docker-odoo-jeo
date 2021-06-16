@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-sd build --rm=true -t jobiols/odoo-jeo:14.0 ./
+sd build --rm=true -t regaby/odoo-ce:14.0 ./
