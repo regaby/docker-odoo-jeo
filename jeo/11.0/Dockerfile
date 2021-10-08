@@ -140,6 +140,7 @@ RUN pip3 install -r /req/fecr.txt
 #RUN pip3 install -r /req/adhoc-reporting-engine.txt # esto no anda por el pycups
 RUN pip3 install -r /req/letsencrypt-requirements.txt
 RUN pip3 install -r /req/requirements.txt
+RUN pip3 install -r /req/oca-openupgradelib.txt
 RUN rm -r /req
 
 # crear cache para pyafipws lo necesita para actualizar desde padron y darle

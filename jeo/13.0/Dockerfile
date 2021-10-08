@@ -54,7 +54,7 @@ RUN npm install -g rtlcss
 
 # Install Odoo
 ENV ODOO_VERSION 13.0
-ARG ODOO_RELEASE=20200808
+ARG ODOO_RELEASE=20210824
 #ARG ODOO_SHA=db29fbcebf63f9f656e9445f462190ac775ee533
 RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
 #        && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
@@ -117,6 +117,7 @@ RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
 
 RUN apt-get -qq update && apt-get install -yqq --no-install-recommends \
     git \
+    python3-pycurl \
     python3-dev build-essential
 
 RUN pip3 install git+https://github.com/OCA/openupgradelib/@master

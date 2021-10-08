@@ -31,4 +31,10 @@ pyproj
 
 openpyxl
 netifaces
-pycurl
+
+# dependencias TMS
+sodapy
+responses
+
+# todo pago
+suds-jurko

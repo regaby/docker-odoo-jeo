@@ -9,7 +9,9 @@ requests_oauthlib
 phonenumbers
 num2words
 # ot de amic
+# dependencias meli
 pdf2image
+git+https://github.com/mercadolibre/python-sdk.git
 openpyxl
 geopy
 # el bueno de mario
@@ -20,3 +22,4 @@ jwt
 
 # debug en vscode
 debugpy
+idna
