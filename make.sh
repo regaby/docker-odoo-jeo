@@ -74,22 +74,40 @@
 #     echo "----------> Success odoo-ce:14.0.debug"
 # fi
 
-cd jeo/15.0
+# cd jeo/15.0
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:15.0"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:15.0"
+# fi
+
+# cd ../15.0.debug
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:15.0.debug"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:15.0.debug"
+# fi
+
+cd jeo/16.0
 if ! ./make.sh;
 then
-    echo "Failed odoo-ce:15.0"
+    echo "Failed odoo-ce:16.0"
 	exit 1
 else
-    echo "----------> Success odoo-ce:15.0"
+    echo "----------> Success odoo-ce:16.0"
 fi
 
-cd ../15.0.debug
+cd ../16.0.debug
 if ! ./make.sh;
 then
-    echo "Failed odoo-ce:15.0.debug"
+    echo "Failed odoo-ce:16.0.debug"
 	exit 1
 else
-    echo "----------> Success odoo-ce:15.0.debug"
+    echo "----------> Success odoo-ce:16.0.debug"
 fi
 
 
