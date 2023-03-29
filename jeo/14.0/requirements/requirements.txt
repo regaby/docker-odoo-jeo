@@ -1,11 +1,28 @@
-pysftp
+# pysftp
 # requerimientos de aeroo
 #git+https://github.com/adhoc-dev/aeroolib@master-fix-ods
 #git+https://github.com/aeroo/currency2text.git
 #pyPDF2
 
 # dependencias zebra
-simple_zpl2
-zebra
-cups
-wand
+
+# simple_zpl2
+# zebra
+# cups
+# wand
+
+## dependencia l10n_cl_edi
+zeep
+pandas
+# RUST
+# Cython
+# pysam
+# pyOpenSSL
+
+# dependencia para meli
+
+pdf2image
+git+https://github.com/mercadolibre/python-sdk.git
+
+openpyxl
+facebook-sdk

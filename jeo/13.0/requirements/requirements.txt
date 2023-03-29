@@ -15,10 +15,13 @@ docker==4.2.0
 # dependencia para meli
 
 pdf2image
+git+https://github.com/mercadolibre/python-sdk.git
 
 # dependencias para mercado pago
 
-mercadopago
+# mercadopago
+# mercadopago===1.1.1
+mercadopago==2.2.0
 
 # dependencia social_push_notifications
 
@@ -38,3 +41,38 @@ responses
 
 # todo pago
 suds-jurko
+
+# six==1.9.0
+# six
+
+# python-amazon-sp-api 0.0.3 depends on six~=1.15.0
+six==1.10
+# six==1.15
+
+# zebra
+simple_zpl2
+zebra
+cups
+
+# blancoamor
+twilio
+pymssql
+git+https://gitlab.com/filoquin/ar_mobile_parce
+html2text
+
+###
+python-stdnum==1.17
+
+## seller
+xmltodict
+# mws
+# python-amazon-sp-api
+# odoorpc
+# qrtools
+# python-barcode
+# Pillow
+# PyUPC-EAN
+# ebaysdk
+# dicttoxml
+# pyOpenSSL==19.1.0
+# pyOpenSSL

@@ -31,6 +31,8 @@ RUN apt-get update && \
         python3-xlrd \
         python3-xlwt \
         xz-utils \
+        libffi-dev \
+        python-pysam \
     && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_amd64.deb \
     && echo 'ea8277df4297afc507c61122f3c349af142f31e5 wkhtmltox.deb' | sha1sum -c - \
     && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
@@ -55,10 +57,10 @@ RUN npm install -g rtlcss
 
 # Install Odoo
 ENV ODOO_VERSION 14.0
-ENV ODOO_RELEASE=20201026
+ENV ODOO_RELEASE=20220930
 ARG ODOO_SHA=f03d267d3a055dbc798b799efbfcb1eb9a739b23
 RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
-    && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
+    # && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
     && apt-get update \
     && apt-get -y install --no-install-recommends ./odoo.deb \
     && rm -rf /var/lib/apt/lists/* odoo.deb
@@ -117,23 +119,23 @@ RUN apt-get -qq update && apt-get install -yqq --no-install-recommends \
 
 COPY ./requirements /req
 RUN pip3 install -r /req/requirements.txt
-RUN pip3 install -r /req/adhoc-odoo-argentina.txt
+# RUN pip3 install -r /req/adhoc-odoo-argentina.txt
 # RUN pip3 install -r /req/adhoc-aeroo_reports.txt
 # RUN pip3 install -r /req/oca-geospatial.txt
 # RUN pip3 install -r /req/oca-rest-framework.txt
 
 RUN rm -r /req
 
-# crear cache para pyafipws
-USER root
-RUN mkdir /usr/local/lib/python3.7/dist-packages/pyafipws/cache
-USER root
-RUN chmod o+rw /usr/local/lib/python3.7/dist-packages/pyafipws/cache
+# # crear cache para pyafipws
+# USER root
+# RUN mkdir /usr/local/lib/python3.7/dist-packages/pyafipws/cache
+# USER root
+# RUN chmod o+rw /usr/local/lib/python3.7/dist-packages/pyafipws/cache
 
 # COPY ./fix_handshake.sh /
 # USER root
 # ENTRYPOINT ["/fix_handshake.sh"]
-RUN sed -i 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
+# RUN sed -i 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
 
 USER odoo
 

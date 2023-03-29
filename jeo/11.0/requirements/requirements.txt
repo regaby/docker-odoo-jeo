@@ -15,10 +15,10 @@ git+https://github.com/mercadolibre/python-sdk.git
 openpyxl
 geopy
 # el bueno de mario
-MechanicalSoup
-zpl2
-pyodbc
-jwt
+# MechanicalSoup
+# zpl2
+# pyodbc
+# jwt
 
 # debug en vscode
 debugpy

@@ -51,10 +51,11 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
 
 # Install rtlcss (on Debian buster)
 RUN npm install -g rtlcss
+RUN npm install express
 
 # Install Odoo
 ENV ODOO_VERSION 13.0
-ARG ODOO_RELEASE=20210824
+ARG ODOO_RELEASE=20230215
 #ARG ODOO_SHA=db29fbcebf63f9f656e9445f462190ac775ee533
 RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
 #        && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
@@ -92,7 +93,7 @@ CMD ["odoo"]
 
 FROM base-image
 LABEL maintainer="Gabriela Rivero <regaby@gmail.com>"
-ENV Release 2020-08-08
+ENV Release 2021-11-29
 
 USER root
 
@@ -125,6 +126,12 @@ RUN pip3 install git+https://github.com/OCA/openupgradelib/@master
 # requisites for M2Crypto
 RUN apt-get update -qq
 RUN apt-get install build-essential python3-dev python-dev libssl-dev swig -y -qq
+
+RUN apt-get install python3-wand libmagickwand-dev imagemagick -y -qq
+
+RUN pip3 install git+https://gitlab.com/filoquin/ar_mobile_parce.git
+RUN pip3 install git+https://github.com/mercadolibre/python-sdk.git
+RUN pip3 uninstall python-stdnum -y
 
 COPY ./requirements /req
 RUN pip3 install -r /req/requirements.txt

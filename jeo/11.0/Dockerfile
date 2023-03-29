@@ -53,7 +53,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main' > /etc
 
 # Install Odoo
 ENV ODOO_VERSION 11.0
-ARG ODOO_RELEASE=20200709
+ARG ODOO_RELEASE=20210922
 #ARG ODOO_SHA=e21c34a263785eea09babd7a0d876ba05c841935
 RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
 #        && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
@@ -95,48 +95,63 @@ ENV Release 2020-07-09
 
 USER root
 
+# instalar ultima version de pip
+RUN curl -fsSL https://bootstrap.pypa.io/pip/3.5/get-pip.py -o get-pip.py
+RUN python3 get-pip.py
+RUN pip install install --ignore-installed psycopg2-binary
+
 # Other requirements, useful tools and recommendations to run Odoo (libldap2-dev
-# libsasl2-dev re recommended by odoo here https://www.odoo.com/documentation/11.0/setup/install.html). libcups2-dev is for aeroo. Then install locales and later clean everything
+# libsasl2-dev re recommended by odoo here https://www.odoo.com/documentation/11.0/setup/install.html).
+# libcups2-dev is for aeroo. Then install locales and later clean everything
 RUN apt-get -qq update && apt-get install -yqq --no-install-recommends \
     git ssh wget unzip iputils-ping \
-    python3-dev build-essential \
-    libldap2-dev libsasl2-dev \
+    libldap2-dev \
+    libsasl2-dev \
     libcups2-dev \
-    python3-lxml \
     locales \
+    && rm -rf /var/lib/apt/lists/* \
     && locale-gen en_US.UTF-8 && update-locale \
     && locale-gen es_AR.UTF-8 && update-locale \
-    && echo 'LANG="en_US.UTF-8"' > /etc/default/locale \
-    && pip3 install --no-cache-dir --upgrade pip setuptools
+    && echo 'LANG="en_US.UTF-8"' > /etc/default/locale
 
-RUN pip3 install wheel vobject qrcode git+https://github.com/OCA/openupgradelib/@master \
-    && apt-get purge -yqq build-essential '*-dev' \
-    && apt-get -yqq autoremove \
+# RUN pip3 install --ignore-installed git+https://github.com/OCA/openupgradelib.git@master
+
+RUN pip3 install wheel vobject qrcode \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# requisites for M2Crypto
-RUN apt-get update -qq
-RUN apt-get install build-essential python3-dev python-dev libssl-dev swig -y -qq
+RUN apt-get -qq update && apt-get install -yqq --no-install-recommends \
+    build-essential \
+    python3-dev \
+    python-dev \
+    libssl-dev swig \
+    unixodbc-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install unixodbc-dev -y
+# # requisites for M2Crypto
+# RUN apt-get update -qq
+# RUN apt-get install build-essential python3-dev python-dev libssl-dev swig -y -qq
+
+# RUN apt-get install unixodbc-dev -y
+
+RUN pip3 install python-magic
 
 COPY ./requirements /req
 RUN pip3 install -r /req/adhoc-account-payment.txt
 RUN pip3 install -r /req/adhoc-aeroo_reports.txt
 RUN pip3 install -r /req/adhoc-argentina-reporting.txt
-RUN pip3 install -r /req/adhoc-odoo-argentina.txt
+# RUN pip3 install -r /req/adhoc-odoo-argentina.txt
 RUN pip3 install -r /req/adhoc-argentina-sale.txt
 RUN pip3 install -r /req/adhoc-miscellaneous.txt
 RUN pip3 install -r /req/adhoc-odoo-support.txt
 RUN pip3 install -r /req/adhoc-product.txt
-RUN pip3 install -r /req/oca-server-tools.txt
+# RUN pip3 install -r /req/oca-server-tools.txt
 RUN pip3 install -r /req/oca-web.txt
 RUN pip3 install -r /req/woocommerce-connector.txt
 RUN pip3 install -r /req/oca-rest-framework.txt
 RUN pip3 install -r /req/oca-connector.txt
 RUN pip3 install -r /req/oca-partner-contact.txt
 RUN pip3 install -r /req/oca-geospatial.txt
-RUN pip3 install -r /req/fecr.txt
+# RUN pip3 install -r /req/fecr.txt
 #RUN pip3 install -r /req/adhoc-reporting-engine.txt # esto no anda por el pycups
 RUN pip3 install -r /req/letsencrypt-requirements.txt
 RUN pip3 install -r /req/requirements.txt
@@ -146,8 +161,9 @@ RUN rm -r /req
 # crear cache para pyafipws lo necesita para actualizar desde padron y darle
 # permisos para que pueda escribir desde pyafipws porque ahi hay una base
 # sqlite que se usa cuando se refrescan actividades, impuestos y conceptos.
-RUN mkdir /usr/local/lib/python3.5/dist-packages/pyafipws/cache
-RUN chmod -R o+w /usr/local/lib/python3.5/dist-packages/pyafipws
+
+# RUN mkdir /usr/local/lib/python3.5/dist-packages/pyafipws/cache
+# RUN chmod -R o+w /usr/local/lib/python3.5/dist-packages/pyafipws
 
 # Make auto_install = False for various modules
 RUN sed  -i  "s/'auto_install': True/'auto_install': False/" /usr/lib/python3/dist-packages/odoo/addons/l10n_ar/__manifest__.py
