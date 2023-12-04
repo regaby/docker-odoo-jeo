@@ -26,3 +26,10 @@ git+https://github.com/mercadolibre/python-sdk.git
 
 openpyxl
 facebook-sdk
+
+# elasticsearch
+cachetools
+requests
+algoliasearch>=2.0,<3.0
+elasticsearch>=7.0.0,<=7.13.4
+unidecode

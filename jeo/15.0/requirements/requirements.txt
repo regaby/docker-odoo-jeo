@@ -28,3 +28,25 @@ pytz
 
 # social
 google_auth>=1.18.0
+
+# whatsapp
+heyoo
+
+#AttributeError: module 'werkzeug.routing' has no attribute 'NumberConverter' - - -
+# https://github.com/nedera/Odoo
+Werkzeug==0.16.1
+
+# elastic search
+elasticsearch>=7.0.0,<=7.13.4
+
+## mirgor
+git+https://bitbucket.org/blueorangegroup/mercadolibre.git#egg=mercadolibre
+pandas
+pycups
+redis
+
+# linkedin
+mechanize
+
+# mercadopago
+mercadopago

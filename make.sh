@@ -38,6 +38,9 @@
 #     echo "----------> Success odoo-ce:12.0.debug"
 # fi
 
+# cd /odoo_ar/odoo-13.0/
+# sudo rm -r dist-local-packages dist-packages extra-addons
+
 # cd jeo/13.0
 # if ! ./make.sh;
 # then
@@ -55,6 +58,9 @@
 # else
 #     echo "----------> Success odoo-ce:13.0.debug"
 # fi
+
+# cd /odoo_ar/odoo-14.0/
+# sudo rm -r dist-local-packages dist-packages extra-addons
 
 # cd jeo/14.0
 # if ! ./make.sh;
@@ -74,40 +80,53 @@
 #     echo "----------> Success odoo-ce:14.0.debug"
 # fi
 
-# cd jeo/15.0
-# if ! ./make.sh;
-# then
-#     echo "Failed odoo-ce:15.0"
-# 	exit 1
-# else
-#     echo "----------> Success odoo-ce:15.0"
-# fi
+    # cd /odoo_ar/odoo-15.0/
+    # sudo rm -r dist-local-packages dist-packages extra-addons
 
-# cd ../15.0.debug
-# if ! ./make.sh;
-# then
-#     echo "Failed odoo-ce:15.0.debug"
-# 	exit 1
-# else
-#     echo "----------> Success odoo-ce:15.0.debug"
-# fi
-
-cd jeo/16.0
+cd jeo/15.0
 if ! ./make.sh;
 then
-    echo "Failed odoo-ce:16.0"
+    echo "Failed odoo-ce:15.0"
 	exit 1
 else
-    echo "----------> Success odoo-ce:16.0"
+    echo "----------> Success odoo-ce:15.0"
 fi
 
-cd ../16.0.debug
+cd ../15.0.debug
 if ! ./make.sh;
 then
-    echo "Failed odoo-ce:16.0.debug"
+    echo "Failed odoo-ce:15.0.debug"
 	exit 1
 else
-    echo "----------> Success odoo-ce:16.0.debug"
+    echo "----------> Success odoo-ce:15.0.debug"
 fi
+
+# cd /odoo_ar/odoo-16.0/
+# sudo rm -r dist-local-packages dist-packages extra-addons
+
+# dirs=( dist-local-packages dist-packages extra-addons )
+# for dir in ${dirs[@]}
+# do
+#     cd /odoo_ar/odoo-16.0/
+#     sudo rm -r $dir
+# done
+
+# cd /home/openerp/workspace/odoo-dev/docker-odoo-jeo/jeo/16.0
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:16.0"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:16.0"
+# fi
+
+# cd ../16.0.debug
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:16.0.debug"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:16.0.debug"
+# fi
 
 

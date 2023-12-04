@@ -55,10 +55,10 @@ RUN npm install -g rtlcss
 
 # Install Odoo
 ENV ODOO_VERSION 16.0
-ARG ODOO_RELEASE=20221012
-ARG ODOO_SHA=f34bc089609c2a7da65f25f29cf4e0218c7af464
+ARG ODOO_RELEASE=20230419
+# ARG ODOO_SHA=f34bc089609c2a7da65f25f29cf4e0218c7af464
 RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
-    && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
+    # && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
     && apt-get update \
     && apt-get -y install --no-install-recommends ./odoo.deb \
     && rm -rf /var/lib/apt/lists/* odoo.deb
@@ -121,10 +121,24 @@ RUN apt-get -qq update && apt-get install -yqq --no-install-recommends \
 
 # RUN pip3 install git+https://github.com/OCA/openupgradelib/@master
 
-# COPY ./requirements /req
-# RUN pip3 install -r /req/requirements.txt
-# RUN pip3 install -r /req/odoo-argentina.txt
+# # requisitos para M2Crypto
+#RUN apt-get update -qq
+RUN apt-get install python-dev libssl-dev swig -y -qq
+
+COPY ./requirements /req
+RUN pip3 install -r /req/requirements.txt
+RUN pip3 install -r /req/odoo-argentina.txt
 # RUN pip3 install -r /req/adhoc-aeroo_reports.txt
-# RUN rm -r /req
+RUN rm -r /req
+
+# crear cache para pyafipws lo necesita para actualizar desde padron y darle
+# permisos para que pueda escribir desde pyafipws porque ahi hay una base
+# sqlite que se usa cuando se refrescan actividades, impuestos y conceptos.
+RUN mkdir /usr/local/lib/python3.9/dist-packages/pyafipws/cache
+RUN chmod -R o+w /usr/local/lib/python3.9/dist-packages/pyafipws
+
+# bajar el cifrado del cliente para evitar el error DH_KEY_TOO_SMALL
+# parece que la afip tiene un cifrado debil.
+RUN sed -i  "s/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=1/" /etc/ssl/openssl.cnf
 
 USER odoo

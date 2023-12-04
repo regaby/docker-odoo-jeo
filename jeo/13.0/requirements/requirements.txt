@@ -65,14 +65,14 @@ python-stdnum==1.17
 
 ## seller
 xmltodict
-# mws
-# python-amazon-sp-api
-# odoorpc
-# qrtools
-# python-barcode
+dicttoxml
+mws
+qrtools
+python-barcode
+ebaysdk
+odoorpc
+python-amazon-sp-api
 # Pillow
 # PyUPC-EAN
-# ebaysdk
-# dicttoxml
 # pyOpenSSL==19.1.0
 # pyOpenSSL
