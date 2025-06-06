@@ -36,18 +36,20 @@ RUN apt-get update \
         && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # install latest postgresql-client
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
-        && GNUPGHOME="$(mktemp -d)" \
-        && export GNUPGHOME \
-        && repokey='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8' \
-        && gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "${repokey}" \
-        && gpg --batch --armor --export "${repokey}" > /etc/apt/trusted.gpg.d/pgdg.gpg.asc \
-        && gpgconf --kill all \
-        && rm -rf "$GNUPGHOME" \
-        && apt-get update  \
-        && apt-get install --no-install-recommends -y postgresql-client \
-        && rm -f /etc/apt/sources.list.d/pgdg.list \
-        && rm -rf /var/lib/apt/lists/*
+# RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
+#         && GNUPGHOME="$(mktemp -d)" \
+#         && export GNUPGHOME \
+#         && repokey='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8' \
+#         && gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "${repokey}" \
+#         && gpg --batch --armor --export "${repokey}" > /etc/apt/trusted.gpg.d/pgdg.gpg.asc \
+#         && gpgconf --kill all \
+#         && rm -rf "$GNUPGHOME" \
+#         && apt-get update  \
+#         && apt-get install --no-install-recommends -y postgresql-client \
+#         && rm -f /etc/apt/sources.list.d/pgdg.list \
+#         && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 
 # Install rtlcss (on Debian buster)
 RUN npm install -g rtlcss
@@ -55,7 +57,9 @@ RUN npm install express
 
 # Install Odoo
 ENV ODOO_VERSION 13.0
-ARG ODOO_RELEASE=20230215
+# ARG ODOO_RELEASE=20230215
+# ARG ODOO_RELEASE=20230301
+ARG ODOO_RELEASE=20230601
 #ARG ODOO_SHA=db29fbcebf63f9f656e9445f462190ac775ee533
 RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
 #        && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
@@ -112,7 +116,8 @@ RUN \
     && chown -R odoo.odoo /opt/odoo \
     && chown -R odoo.odoo /var/odoo
 
-RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+# RUN curl -fsSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+RUN curl -fsSL https://bootstrap.pypa.io/pip/3.7/get-pip.py -o get-pip.py \
     && python3 get-pip.py \
     && rm get-pip.py
 
@@ -132,6 +137,15 @@ RUN apt-get install python3-wand libmagickwand-dev imagemagick -y -qq
 RUN pip3 install git+https://gitlab.com/filoquin/ar_mobile_parce.git
 RUN pip3 install git+https://github.com/mercadolibre/python-sdk.git
 RUN pip3 uninstall python-stdnum -y
+
+# # esto agrego para que no me de error la libreria de mysql
+# RUN apt-get update && apt-get install -y \
+#     gcc \
+#     python3-dev \
+#     freetds-dev \
+#     libffi-dev \
+#     build-essential \
+#     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements /req
 RUN pip3 install -r /req/requirements.txt

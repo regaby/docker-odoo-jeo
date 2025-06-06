@@ -56,7 +56,7 @@ cups
 
 # blancoamor
 twilio
-pymssql
+pymssql==2.2.7
 git+https://gitlab.com/filoquin/ar_mobile_parce
 html2text
 
