@@ -1,0 +1,16 @@
+defusedxml
+num2words
+# pyzbar
+numpy
+odoorpc
+pandas
+
+gTTS == 2.5.1
+SQLAlchemy==2.0.32
+astor
+redis
+pysftp
+
+# alberto
+simplejson
+barcode

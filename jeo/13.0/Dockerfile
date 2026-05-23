@@ -155,6 +155,8 @@ RUN pip3 install -r /req/oca-geospatial.txt
 RUN pip3 install -r /req/oca-rest-framework.txt
 RUN pip3 install -r /req/oca-server-tools.txt
 
+RUN pip3 install numpy scipy scikit-learn
+
 RUN rm -r /req
 
 # crear cache para pyafipws

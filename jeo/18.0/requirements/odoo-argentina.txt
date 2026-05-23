@@ -1,0 +1,2 @@
+git+https://github.com/reingart/pyafipws
+#git+https://github.com/ingadhoc/pyafipws.git@odoo18

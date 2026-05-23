@@ -12,6 +12,7 @@ OdooRPC==0.8.0
 qrtools==0.0.2
 python-barcode==0.14.0
 pysftp==0.2.9
+paramiko==2.7.2
 pdf2image==1.16.0
 xmltodict==0.13.0
 dicttoxml==1.7.4
@@ -44,6 +45,10 @@ git+https://bitbucket.org/blueorangegroup/mercadolibre.git#egg=mercadolibre
 pandas
 pycups
 redis
+zxcvbn
+simple_salesforce
+gTTS == 2.5.1
+# SQLAlchemy
 
 # linkedin
 mechanize

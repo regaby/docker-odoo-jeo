@@ -76,3 +76,6 @@ python-amazon-sp-api
 # PyUPC-EAN
 # pyOpenSSL==19.1.0
 # pyOpenSSL
+
+## textract
+boto3
