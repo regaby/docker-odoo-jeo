@@ -138,6 +138,9 @@ RUN curl -fsSL https://bootstrap.pypa.io/pip/3.7/get-pip.py -o get-pip.py \
     && python3 get-pip.py \
     && rm get-pip.py
 
+# Pin versions compatibles con Python 3.7 (sin esto, pip moderno rompe la build de M2Crypto y otros paquetes viejos)
+RUN python3 -m pip install --no-cache-dir --upgrade "pip<24" "setuptools==57.5.0" "wheel<0.42"
+
 RUN apt-get -qq update && apt-get install -yqq --no-install-recommends \
     git \
     python3-pycurl \
@@ -165,12 +168,19 @@ RUN pip3 uninstall python-stdnum -y
 #     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements /req
-RUN pip3 install -r /req/requirements.txt
-RUN pip3 install -r /req/adhoc-odoo-argentina.txt
-RUN pip3 install -r /req/adhoc-aeroo_reports.txt
-RUN pip3 install -r /req/oca-geospatial.txt
-RUN pip3 install -r /req/oca-rest-framework.txt
-RUN pip3 install -r /req/oca-server-tools.txt
+
+# Sacar M2Crypto del requirements: rompe al compilar con Python 3.7 + pip moderno.
+# pyOpenSSL (que ya viene por apt en la base) cubre lo que necesitan los modulos AR.
+RUN sed -i '/^[[:space:]]*M2[[:space:]]*Crypto.*/Id' /req/adhoc-odoo-argentina.txt
+
+# PIP_NO_BUILD_ISOLATION=1 evita que pip cree un venv aislado al compilar paquetes viejos
+# (en ese venv no encuentra setuptools y rompe).
+RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/requirements.txt
+RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/adhoc-odoo-argentina.txt
+RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/adhoc-aeroo_reports.txt
+RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/oca-geospatial.txt
+RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/oca-rest-framework.txt
+RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/oca-server-tools.txt
 
 RUN pip3 install numpy scipy scikit-learn
 
