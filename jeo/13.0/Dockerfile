@@ -67,6 +67,17 @@ RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/od
         && apt-get -y install --no-install-recommends ./odoo.deb \
         && rm -rf /var/lib/apt/lists/* odoo.deb
 
+# Cambiar UID:GID del usuario odoo de 101 → 50001 para matchear con EFS Access Point del EKS.
+# El CSI driver de EFS auto-asigna UIDs del rango 50000+ y la PVC actual quedo con 50001.
+# Sin esto, el contenedor corriendo como UID 101 no puede leer/escribir en la EFS compartida
+# (sintoma: HTTP "Empty reply from server" sin logs porque los workers mueren al escribir sesiones).
+RUN OLD_UID=$(id -u odoo) && OLD_GID=$(getent group odoo | cut -d: -f3) && \
+    groupmod -g 50001 odoo && \
+    usermod -u 50001 -g 50001 odoo && \
+    find / -xdev -uid "$OLD_UID" -exec chown -h 50001 {} + 2>/dev/null; \
+    find / -xdev -gid "$OLD_GID" -exec chgrp -h 50001 {} + 2>/dev/null; \
+    true
+
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc/odoo/
