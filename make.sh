@@ -50,14 +50,14 @@ else
     echo "----------> Success odoo-ce:13.0"
 fi
 
-# cd ../13.0.debug
-# if ! ./make.sh;
-# then
-#     echo "Failed odoo-ce:13.0.debug"
-# 	exit 1
-# else
-#     echo "----------> Success odoo-ce:13.0.debug"
-# fi
+cd ../13.0.debug
+if ! ./make.sh;
+then
+    echo "Failed odoo-ce:13.0.debug"
+	exit 1
+else
+    echo "----------> Success odoo-ce:13.0.debug"
+fi
 
 # cd /odoo_ar/odoo-14.0/
 # sudo rm -r dist-local-packages dist-packages extra-addons
@@ -130,6 +130,25 @@ fi
 # fi
 
 
+# cd jeo/17.0
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:17.0"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:17.0"
+# fi
+
+# cd ../17.0.debug
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:17.0.debug"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:17.0.debug"
+# fi
+
+
 
 # cd /odoo_ar/odoo-18.0/
 # sudo rm -r dist-local-packages dist-packages extra-addons
@@ -157,6 +176,24 @@ fi
 # 	exit 1
 # else
 #     echo "----------> Success odoo-ce:18.0.debug"
+# fi
+
+# cd jeo/19.0
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:19.0"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:19.0"
+# fi
+
+# cd ../19.0.debug
+# if ! ./make.sh;
+# then
+#     echo "Failed odoo-ce:19.0.debug"
+# 	exit 1
+# else
+#     echo "----------> Success odoo-ce:19.0.debug"
 # fi
 
 

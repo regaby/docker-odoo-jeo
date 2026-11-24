@@ -79,3 +79,12 @@ python-amazon-sp-api
 
 ## textract
 boto3
+# tokenizers>=0.13 (dependencia de anthropic) no tiene wheel para Python 3.7 (buster)
+# a partir de la 0.14 y falla al compilar desde fuente (requiere Python >=3.9).
+# Se fija a la 0.13.3, que sí trae wheel manylinux para cp37.
+tokenizers==0.13.3
+# anthropic>=0.27 depende de jiter, que tampoco tiene wheel para cp37 y falla
+# al compilar (requiere Rust/maturin). 0.26.0 es la última versión sin esa
+# dependencia y ya trae la Messages API (client.messages.create) que usa
+# ba_anthropic_invoice — 0.3.11 es de antes de que esa API existiera.
+anthropic==0.26.0

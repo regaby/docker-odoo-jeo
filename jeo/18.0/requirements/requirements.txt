@@ -9,8 +9,12 @@ gTTS == 2.5.1
 SQLAlchemy==2.0.32
 astor
 redis
+paramiko==2.7.1
 pysftp
 
-# alberto
+# alberta
 simplejson
 barcode
+
+# innova
+openupgradelib

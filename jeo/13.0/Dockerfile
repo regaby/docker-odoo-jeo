@@ -6,11 +6,13 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 # Generate locale C.UTF-8 for postgres and general locale data
 ENV LANG C.UTF-8
 
-# Debian Buster esta EoL desde 2024-06 - redirigir apt a archive.debian.org
-# (sin esto, apt-get update da 404 en los mirrors normales)
-RUN sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list && \
-    sed -i 's|http://security.debian.org|http://archive.debian.org/debian-security|g' /etc/apt/sources.list && \
-    echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+# Debian buster is EOL: deb.debian.org/security.debian.org no longer serve it (404).
+# Point apt at the archive and stop checking Release file expiry.
+RUN sed -i \
+        -e 's|deb.debian.org/debian|archive.debian.org/debian|g' \
+        -e 's|security.debian.org/debian-security|archive.debian.org/debian-security|g' \
+        /etc/apt/sources.list \
+    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
 
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
 RUN apt-get update \
@@ -73,17 +75,6 @@ RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/od
         && apt-get -y install --no-install-recommends ./odoo.deb \
         && rm -rf /var/lib/apt/lists/* odoo.deb
 
-# Cambiar UID:GID del usuario odoo de 101 → 50001 para matchear con EFS Access Point del EKS.
-# El CSI driver de EFS auto-asigna UIDs del rango 50000+ y la PVC actual quedo con 50001.
-# Sin esto, el contenedor corriendo como UID 101 no puede leer/escribir en la EFS compartida
-# (sintoma: HTTP "Empty reply from server" sin logs porque los workers mueren al escribir sesiones).
-RUN OLD_UID=$(id -u odoo) && OLD_GID=$(getent group odoo | cut -d: -f3) && \
-    groupmod -g 50001 odoo && \
-    usermod -u 50001 -g 50001 odoo && \
-    find / -xdev -uid "$OLD_UID" -exec chown -h 50001 {} + 2>/dev/null; \
-    find / -xdev -gid "$OLD_GID" -exec chgrp -h 50001 {} + 2>/dev/null; \
-    true
-
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc/odoo/
@@ -138,9 +129,6 @@ RUN curl -fsSL https://bootstrap.pypa.io/pip/3.7/get-pip.py -o get-pip.py \
     && python3 get-pip.py \
     && rm get-pip.py
 
-# Pin versions compatibles con Python 3.7 (sin esto, pip moderno rompe la build de M2Crypto y otros paquetes viejos)
-RUN python3 -m pip install --no-cache-dir --upgrade "pip<24" "setuptools==57.5.0" "wheel<0.42"
-
 RUN apt-get -qq update && apt-get install -yqq --no-install-recommends \
     git \
     python3-pycurl \
@@ -153,6 +141,8 @@ RUN apt-get update -qq
 RUN apt-get install build-essential python3-dev python-dev libssl-dev swig -y -qq
 
 RUN apt-get install python3-wand libmagickwand-dev imagemagick -y -qq
+
+# RUN apt-get install -y htop
 
 RUN pip3 install git+https://gitlab.com/filoquin/ar_mobile_parce.git
 RUN pip3 install git+https://github.com/mercadolibre/python-sdk.git
@@ -168,19 +158,19 @@ RUN pip3 uninstall python-stdnum -y
 #     && rm -rf /var/lib/apt/lists/*
 
 COPY ./requirements /req
+RUN pip3 install -r /req/requirements.txt
+# --no-build-isolation: pip's isolated build env can't see the apt-installed
+# python3-setuptools, and modern setuptools sdists no longer support py3.7,
+# which breaks the M2Crypto source build here.
+RUN pip3 install --no-build-isolation -r /req/adhoc-odoo-argentina.txt
+RUN pip3 install -r /req/adhoc-aeroo_reports.txt
+RUN pip3 install -r /req/oca-geospatial.txt
+RUN pip3 install -r /req/oca-rest-framework.txt
+RUN pip3 install -r /req/oca-server-tools.txt
 
-# Sacar M2Crypto del requirements: rompe al compilar con Python 3.7 + pip moderno.
-# pyOpenSSL (que ya viene por apt en la base) cubre lo que necesitan los modulos AR.
-RUN sed -i '/^[[:space:]]*M2[[:space:]]*Crypto.*/Id' /req/adhoc-odoo-argentina.txt
-
-# PIP_NO_BUILD_ISOLATION=1 evita que pip cree un venv aislado al compilar paquetes viejos
-# (en ese venv no encuentra setuptools y rompe).
-RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/requirements.txt
-RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/adhoc-odoo-argentina.txt
-RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/adhoc-aeroo_reports.txt
-RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/oca-geospatial.txt
-RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/oca-rest-framework.txt
-RUN PIP_NO_BUILD_ISOLATION=1 pip3 install -r /req/oca-server-tools.txt
+# Instalar pg-activity y dependencias
+# RUN pip3 install --no-cache-dir psycopg2-binary pg_activity \
+#     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install numpy scipy scikit-learn
 

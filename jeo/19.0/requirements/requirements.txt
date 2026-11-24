@@ -1,0 +1,46 @@
+pandas==2.3.3
+defusedxml==0.7.1
+num2words==0.5.10
+pika==1.3.2
+zope.event==6.1
+tools==1.0.23
+openupgradelib==3.12.0
+odoo_upgrade @ git+https://github.com/odoo/upgrade-util@master
+
+# paquetes para sulh reportes — compatible con Python 3.12
+weasyprint==69.0
+
+# paquetes de atlas
+pycountry
+pymupdf4llm
+zeep==4.2.1
+paramiko==3.4.1
+phonenumbers
+schwifty==2024.4.0
+packaging
+azure-ai-documentintelligence
+azure-core
+fuzzywuzzy==0.18.0
+Levenshtein==0.27.3
+python-Levenshtein==0.27.3
+rapidfuzz==3.14.3
+cloudscraper
+mock
+openpyxl
+py3o.formats
+py3o.template
+pyhanko
+pypdf
+unidecode
+anyio
+pyOpenSSL==26.3.0
+cryptography==49.0.0
+pdfplumber
+
+# librerias mountrix
+jwt
+
+# orrico
+git+https://github.com/reingart/pyafipws
+pycairo
+rlPyCairo
