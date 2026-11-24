@@ -187,4 +187,33 @@ RUN chmod o+rw /usr/local/lib/python3.7/dist-packages/pyafipws/cache
 # ENTRYPOINT ["/fix_handshake.sh"]
 RUN sed -i 's/CipherString = DEFAULT@SECLEVEL=2/CipherString = DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
 
+# Mitigation for CVE-2026-130029 (stored XSS through the HTML sanitizer).
+# Odoo published no fix for versions before 16.0; the advisory's workaround is
+# to run lxml against libxml2 >= 2.10.0. Debian buster ships python3-lxml 4.3.2
+# linked to libxml2 2.9.4, so install the lxml 4.9.4 manylinux wheel, which
+# bundles libxml2 2.10.3 and still includes lxml.html.clean (split out in 5.2).
+# --only-binary is required: a source build would link the system libxml2.
+# --ignore-installed because the apt package cannot be uninstalled by pip;
+# /usr/local/lib/python3.7/dist-packages shadows it on sys.path.
+# Kept after every other pip install so no dependency reinstalls lxml.
+RUN pip3 install --no-cache-dir --no-deps --ignore-installed --only-binary lxml "lxml==4.9.4" \
+ && python3 -c "import lxml.etree as e, lxml.html.clean; \
+assert e.LIBXML_VERSION >= (2, 10, 0), e.LIBXML_VERSION; \
+print('lxml', e.LXML_VERSION, 'libxml2', e.LIBXML_VERSION)"
+
+# Odoo core security patches (e.g. CVE-2026-130028, SQL injection via the
+# read_group groupby spec). Odoo ships these only inside its security
+# advisories, not in nightly .deb builds, so they are applied on top of the
+# installed package. Any patch that does not apply cleanly fails the build.
+# The SHELL has no errexit, hence the explicit "|| exit 1".
+COPY ./patches /tmp/odoo-patches
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends patch \
+ && for p in /tmp/odoo-patches/*.patch; do \
+        patch -p0 --forward --batch -d /usr/lib/python3/dist-packages < "$p" || exit 1; \
+    done \
+ && grep -q 'parse_read_group_spec(gb)' /usr/lib/python3/dist-packages/odoo/models.py \
+ && python3 -m py_compile /usr/lib/python3/dist-packages/odoo/models.py \
+ && rm -rf /tmp/odoo-patches /var/lib/apt/lists/*
+
 USER odoo
